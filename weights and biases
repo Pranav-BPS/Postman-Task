@@ -1,0 +1,23 @@
+X=X/255.0
+n1=784
+n2=128
+n3=10
+def create_weights_array(s1,s2):
+    return np.random.randn(s2,s1)*0.01
+w1=create_weights_array(n1,n2)
+def create_bias_array(s2):
+    return np.random.randn(s2,1)*0.01
+b1=create_bias_array(n2)
+w2=create_weights_array(n2,n3)
+b2=create_bias_array(n3)
+X=X.T
+
+Y=np.zeros((10,70000))
+Y[y ,np.arange(70000)]=1
+
+X_train, X_test = X[:, :60000], X[:, 60000:]
+Y_train, Y_test = Y[:, :60000], Y[:, 60000:]
+y_train, y_test = y[:60000], y[60000:]
+
+print(Y[:,0])
+print(y[0])
