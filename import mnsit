@@ -1,0 +1,5 @@
+from sklearn.datasets import fetch_openml
+import numpy as np
+mnist=fetch_openml('mnist_784', version=1,)
+X=mnist['data'].to_numpy()
+y=mnist['target'].to_numpy().astype(int)
