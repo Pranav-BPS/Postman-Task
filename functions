@@ -1,0 +1,36 @@
+def softmax(x):
+    x_shifted=x-x.max(axis=0, keepdims=True)
+    exp_z=np.exp(x_shifted)
+    sum_exp=np.sum(exp_z, axis=0, keepdims=True)
+    return exp_z/sum_exp
+
+def cross_entropy(a2,Y):
+    a2_clipped=np.clip(a2 ,1e-12,1.0)
+    loss=-np.sum(Y*np.log(a2_clipped))/Y.shape[1]
+    return loss
+
+def accuracy(a2, y_true):
+    predictions=np.argmax(a2,axis=0)
+    return np.mean(predictions == y_true)
+
+def forward(X, w1, b1, w2, b2):
+    z1=w1@X+b1
+    a1=np.maximum(0,z1)
+    z2=w2@a1+b2
+    a2=softmax(z2)
+    return z1,a1,z2,a2
+
+def backward(X,Y, z1,a1,a2,w2):
+    dz2=a2-Y
+    dw2=dz2@a1.T/Y.shape[1]
+    db2=np.sum(dz2, axis=1, keepdims=True)/Y.shape[1]
+    da1=w2.T@dz2
+    dz1=da1*(z1>0)
+    dw1=dz1@X.T/Y.shape[1]
+    db1=np.sum(dz1, axis=1, keepdims=True)/Y.shape[1]
+    return dw1, db1, dw2, db2
+
+def compute_loss(X, Y, w1, b1,w2, b2):
+    z1,a1,z2,a2=forward(X, w1, b1, w2, b2)
+    loss=cross_entropy(a2,Y)
+    return loss
