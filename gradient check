@@ -1,0 +1,47 @@
+def gradient_check(X, Y, w1, b1, w2, b2, param_name, epsilon=1e-5, num_checks=10):
+    z1, a1, z2, a2 = forward(X, w1, b1, w2, b2)
+    dw1, db1, dw2, db2 = backward(X, Y, z1, a1, a2, w2)
+
+    if param_name == "w1":
+        param = w1
+        grad = dw1
+    elif param_name == "b1":
+        param = b1
+        grad = db1
+    elif param_name == "w2":
+        param = w2
+        grad = dw2
+    elif param_name == "b2":
+        param = b2
+        grad = db2
+
+    num_grad = np.zeros_like(param)
+    rows = np.random.randint(0, param.shape[0], size=num_checks)
+    cols = np.random.randint(0, param.shape[1], size=num_checks)
+
+    for i, j in zip(rows, cols):
+        param_plus = param.copy()
+        param_minus = param.copy()
+        param_plus[i, j] += epsilon
+        param_minus[i, j] -= epsilon
+
+        if param_name == "w1":
+            loss_plus = compute_loss(X, Y, param_plus, b1, w2, b2)
+            loss_minus = compute_loss(X, Y, param_minus, b1, w2, b2)
+        elif param_name == "b1":
+            loss_plus = compute_loss(X, Y, w1, param_plus, w2, b2)
+            loss_minus = compute_loss(X, Y, w1, param_minus, w2, b2)
+        elif param_name == "w2":
+            loss_plus = compute_loss(X, Y, w1, b1, param_plus, b2)
+            loss_minus = compute_loss(X, Y, w1, b1, param_minus, b2)
+        elif param_name == "b2":
+            loss_plus = compute_loss(X, Y, w1, b1, w2, param_plus)
+            loss_minus = compute_loss(X, Y, w1, b1, w2, param_minus)
+
+        num_grad[i, j] = (loss_plus - loss_minus) / (2 * epsilon)
+
+    for i, j in zip(rows, cols):
+        backprop_val = grad[i, j]
+        numerical_val = num_grad[i, j]
+        rel_diff = abs(backprop_val - numerical_val) / (abs(backprop_val) + abs(numerical_val) + 1e-10)
+        print(f"{param_name} pos ({i},{j}): backprop={backprop_val:.6f}, numerical={numerical_val:.6f}, rel_diff={rel_diff:.2e}")
