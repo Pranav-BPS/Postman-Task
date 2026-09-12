@@ -1,0 +1,4 @@
+gradient_check(X_train[:, :10], Y_train[:, :10], w1, b1, w2, b2, "w1")
+gradient_check(X_train[:, :10], Y_train[:, :10], w1, b1, w2, b2, "b1")
+gradient_check(X_train[:, :10], Y_train[:, :10], w1, b1, w2, b2, "w2")
+gradient_check(X_train[:, :10], Y_train[:, :10], w1, b1, w2, b2, "b2")
